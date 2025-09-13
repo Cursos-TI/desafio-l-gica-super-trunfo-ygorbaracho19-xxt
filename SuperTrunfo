@@ -1,0 +1,125 @@
+# -*- coding: utf-8 -*-
+
+def cadastrar_carta(numero_da_carta):
+    """
+    Função para solicitar ao usuário os dados de uma carta de cidade
+    e retorná-los em um dicionário.
+    """
+    print(f"\n--- 🏙️  Cadastro da Carta {numero_da_carta} ---")
+    
+    # Solicita as informações da cidade ao usuário
+    estado = input("Digite o estado (ex: SP): ")
+    codigo = input("Digite o código da carta (ex: C01): ")
+    cidade = input("Digite o nome da cidade: ")
+    
+    # Utiliza try-except para garantir que valores numéricos sejam inseridos corretamente
+    while True:
+        try:
+            populacao = int(input("Digite a população: "))
+            area = float(input("Digite a área (em km²): "))
+            pib = float(input("Digite o PIB (em bilhões de R$): "))
+            pontos_turisticos = int(input("Digite o número de pontos turísticos: "))
+            break # Sai do loop se todos os números forem válidos
+        except ValueError:
+            print("\n🚨 Erro: População, área, PIB e pontos turísticos devem ser números. Tente novamente.\n")
+
+    # Cria um dicionário para armazenar os dados da carta
+    carta = {
+        'estado': estado.upper(),
+        'codigo': codigo.upper(),
+        'cidade': cidade,
+        'populacao': populacao,
+        'area': area,
+        'pib': pib,
+        'pontos_turisticos': pontos_turisticos,
+        # Calcula a densidade populacional (habitantes por km²)
+        # Adiciona uma verificação para evitar divisão por zero
+        'densidade': (populacao / area) if area > 0 else 0
+    }
+    
+    return carta
+
+def exibir_carta(carta):
+    """
+    Função para exibir os dados de uma carta de forma organizada.
+    """
+    print(f"\n--- Detalhes da Carta: {carta['cidade']} ---")
+    print(f"Código: {carta['codigo']}")
+    print(f"Cidade: {carta['cidade']} - {carta['estado']}")
+    print(f"População: {carta['populacao']:,} habitantes".replace(',', '.'))
+    print(f"Área: {carta['area']:,.2f} km²".replace(',', '.'))
+    print(f"Densidade Populacional: {carta['densidade']:,.2f} hab/km²".replace(',', '.'))
+    print(f"PIB: R$ {carta['pib']:,.2f} bilhões".replace(',', '.'))
+    print(f"Pontos Turísticos: {carta['pontos_turisticos']}")
+    print("-" * 30)
+
+def comparar_cartas(carta1, carta2, atributo):
+    """
+    Compara duas cartas com base em um atributo específico.
+    """
+    print(f"\n--- ⚔️  Comparando por: {atributo.upper()} ---")
+
+    # Regra especial para densidade: menor valor vence
+    if atributo == 'densidade':
+        print("(Regra especial: Menor valor vence)")
+        valor1 = carta1[atributo]
+        valor2 = carta2[atributo]
+        
+        if valor1 < valor2:
+            vencedor = carta1
+        elif valor2 < valor1:
+            vencedor = carta2
+        else:
+            vencedor = None # Empate
+            
+    # Regra padrão: maior valor vence para os outros atributos
+    else:
+        print("(Regra padrão: Maior valor vence)")
+        valor1 = carta1[atributo]
+        valor2 = carta2[atributo]
+        
+        if valor1 > valor2:
+            vencedor = carta1
+        elif valor2 > valor1:
+            vencedor = carta2
+        else:
+            vencedor = None # Empate
+
+    # Exibição do resultado
+    if vencedor:
+        print(f"🏆 A carta vencedora é: {vencedor['cidade']} ({vencedor['estado']})!")
+    else:
+        print("⚖️ Resultado: Houve um empate!")
+
+# --- Programa Principal ---
+def main():
+    """
+    Função principal que executa o fluxo do programa.
+    """
+    print("Bem-vindo ao Jogo de Cartas de Cidades!")
+    
+    # 1. Cadastro de Cartas
+    carta_1 = cadastrar_carta(1)
+    carta_2 = cadastrar_carta(2)
+    
+    # 2. Exibição das Cartas Cadastradas
+    print("\n==========================================")
+    print("   CARTAS CADASTRADAS COM SUCESSO!   ")
+    print("==========================================")
+    exibir_carta(carta_1)
+    exibir_carta(carta_2)
+    
+    # 3. Comparação e Exibição dos Resultados
+    print("\n==========================================")
+    print("        INICIANDO COMPARAÇÕES        ")
+    print("==========================================")
+    
+    # Exemplos de comparação com base em diferentes atributos
+    comparar_cartas(carta_1, carta_2, 'populacao')
+    comparar_cartas(carta_1, carta_2, 'pib')
+    comparar_cartas(carta_1, carta_2, 'densidade') # Usa a regra especial
+    comparar_cartas(carta_1, carta_2, 'pontos_turisticos')
+
+# Garante que o programa só execute quando este arquivo for o principal
+if __name__ == "__main__":      
+    main()
